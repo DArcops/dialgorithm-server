@@ -21,7 +21,7 @@ var tables = []interface{}{
 func Connect() {
 	var DB_USER string = os.Getenv("MARIADB_USER")
 	var DB_PASS string = os.Getenv("MARIADB_PASS")
-	var DB_NAME string = os.Getenv("MARIADB_NAME")
+	var DB_NAME string = os.Getenv("MARIADB_DIALGORITHM")
 	var DB_HOST string = os.Getenv("MARIADB_HOST")
 	var DB_PORT string = os.Getenv("MARIADB_PORT")
 	source := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME)
