@@ -50,6 +50,10 @@ func Migrate() {
 	}
 }
 
+func Create(value interface{}) *gorm.DB {
+	return db.Create(value)
+}
+
 func First(out interface{}, where ...interface{}) *gorm.DB {
 	return db.First(out, where...)
 }
