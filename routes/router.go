@@ -18,8 +18,6 @@ func Init() {
 	api = router.Group("api")
 	v1 = api.Group("v1")
 
-	userRoutes()
-
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
@@ -33,5 +31,6 @@ func Init() {
 		ValidateHeaders: false,
 	}))
 
+	userRoutes()
 	router.Run(":8088")
 }
