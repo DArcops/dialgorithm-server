@@ -21,18 +21,19 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{})
 		return
 	}
+	fmt.Println("que pedoo", user)
 
 	if err := models.Create(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 
+	c.Header("Access-Control-Allow-Origin", "*")
 	c.JSON(http.StatusCreated, gin.H{})
 	return
 }
 
 func Login(c *gin.Context) {
-
 	if err := c.Bind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{})
 		return
@@ -43,6 +44,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	c.Header("Access-Control-Allow-Origin", "*")
 	c.JSON(http.StatusOK, gin.H{
 		"token": gocql.TimeUUID().String(),
 	})

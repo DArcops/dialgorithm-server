@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
-	routes.Init()
 	models.Connect()
+	models.Migrate()
+	routes.Init()
 }

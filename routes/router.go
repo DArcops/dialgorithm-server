@@ -20,6 +20,9 @@ func Init() {
 
 	userRoutes()
 
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+
 	router.Use(cors.Middleware(cors.Config{
 		Origins:         "*",
 		Methods:         "GET,POST,DELETE,PUT",

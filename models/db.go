@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql" // GORM driver
 )
 
 var db *gorm.DB
@@ -19,10 +20,10 @@ var tables = []interface{}{
 }
 
 func Connect() {
-	var DB_USER string = os.Getenv("MARIADB_USER")
+	var DB_USER string = os.Getenv("MARIADB_USER_DIALGORITHM")
 	var DB_PASS string = os.Getenv("MARIADB_PASS")
 	var DB_NAME string = os.Getenv("MARIADB_DIALGORITHM")
-	var DB_HOST string = os.Getenv("MARIADB_HOST")
+	var DB_HOST string = os.Getenv("MARIADB_HOST_DIALGORITHM")
 	var DB_PORT string = os.Getenv("MARIADB_PORT")
 	source := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME)
 	var i int
@@ -34,10 +35,11 @@ func Connect() {
 		time.Sleep(3 * time.Second)
 		db, err = gorm.Open("mysql", source)
 		if err != nil {
-			fmt.Println("Retrying connection...", err)
+			fmt.Println("Retrying connection...", DB_USER, DB_PASS, DB_HOST)
 			i++
 			continue
 		}
+		fmt.Println("YA SE CONECTO", DB_HOST)
 		db.DB().SetMaxIdleConns(0)
 		db.DB().SetConnMaxLifetime(time.Second * 14400)
 		break
