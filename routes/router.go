@@ -32,5 +32,7 @@ func Init() {
 	}))
 
 	userRoutes()
+	courseRoutes()
+
 	router.Run(":8088")
 }

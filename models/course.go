@@ -1,7 +1,8 @@
 package models
 
 type Course struct {
-	ID   uint
-	Name string
-	Tag  string
+	ID           uint
+	Name         string `json:"name" binding:"required"`
+	Description  string `json:"description" binding:"required"`
+	BaseDirectry string
 }

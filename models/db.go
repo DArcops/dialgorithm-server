@@ -35,7 +35,7 @@ func Connect() {
 		time.Sleep(3 * time.Second)
 		db, err = gorm.Open("mysql", source)
 		if err != nil {
-			fmt.Println("Retrying connection...", DB_USER, DB_PASS, DB_HOST)
+			fmt.Println("Retrying connection...", err)
 			i++
 			continue
 		}
