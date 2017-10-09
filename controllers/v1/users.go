@@ -49,7 +49,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := models.GenerateToken([]byte(gocql.TimeUUID() + "+" + strconv.FormatUint(uint64(user.ID), 10)))
+	token, err := models.GenerateToken([]byte(gocql.TimeUUID().String() + "+" + strconv.FormatUint(uint64(user.ID), 10)))
 
 	if err != nil {
 		c.Header("Access-Control-Allow-Origin", "*")
@@ -62,8 +62,5 @@ func Login(c *gin.Context) {
 		"token": string(token),
 	})
 	return
-	// if len(c.Request.Header.Get("Authorization")) == 0 {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{})
-	// 	return
-	// }
+
 }
