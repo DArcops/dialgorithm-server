@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 )
@@ -13,6 +14,7 @@ import (
 var key = os.Getenv("ENCRYPT_KEY")
 
 func Encrypt(text []byte) ([]byte, error) {
+	fmt.Println("esta es la fucking llave", key)
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		return nil, err

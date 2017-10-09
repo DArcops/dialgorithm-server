@@ -54,12 +54,14 @@ func Login(c *gin.Context) {
 	if err != nil {
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.JSON(http.StatusInternalServerError, gin.H{})
+		fmt.Println("hubo pedo", err)
 		return
 	}
 
 	c.Header("Access-Control-Allow-Origin", "*")
+	fmt.Println("HHSGSSS", token)
 	c.JSON(http.StatusOK, gin.H{
-		"token": string(token),
+		"token": token,
 	})
 	return
 
