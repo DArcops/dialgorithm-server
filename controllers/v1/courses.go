@@ -1,8 +1,8 @@
 package v1
 
 import (
-	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	b64 "encoding/base64"
@@ -16,32 +16,33 @@ func AddCourse(c *gin.Context) {
 	var course models.Course
 
 	user := c.MustGet("user").(models.User)
-	fmt.Println("Usuario identificado", user)
+
+	if !user.CanWrite {
+		Respond(http.StatusForbidden, gin.H{}, c)
+		return
+	}
 
 	if err := c.BindJSON(&course); err != nil {
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.JSON(http.StatusBadRequest, gin.H{})
+		Respond(http.StatusBadRequest, gin.H{}, c)
 		return
 	}
 
 	name := strings.ToLower(course.Name)
 
 	if !models.First(&models.Course{}, "name = ?", name).RecordNotFound() {
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.JSON(http.StatusForbidden, gin.H{
+
+		Respond(http.StatusConflict, gin.H{
 			"error": "This name of course can't be repeated",
-		})
+		}, c)
 		return
 	}
 
 	if err := course.Add(); err != nil {
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.JSON(http.StatusInternalServerError, gin.H{})
+		Respond(http.StatusInternalServerError, gin.H{}, c)
 		return
 	}
 
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.JSON(http.StatusOK, gin.H{})
+	Respond(http.StatusOK, gin.H{}, c)
 	return
 }
 
@@ -79,10 +80,30 @@ func UserMiddleware() gin.HandlerFunc {
 	}
 }
 
+func GetCourses(c *gin.Context) {
+	last := c.Query("last")
+	elem, err := strconv.ParseInt(last, 10, 32)
+	if err != nil {
+		elem = 0
+	}
+	courses, err := models.GetCourses(int(elem))
+	if err != nil {
+		Respond(http.StatusInternalServerError, gin.H{}, c)
+		return
+	}
+	Respond(http.StatusOK, courses, c)
+	return
+}
+
 func RespondWithError(code int, message string, c *gin.Context) {
 	response := map[string]string{"error: ": message}
 
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.JSON(code, response)
 	c.AbortWithStatus(code)
+}
+
+func Respond(code int, data interface{}, c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.JSON(code, data)
 }
