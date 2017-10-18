@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
+	b64 "encoding/base64"
+
 	"github.com/darcops/dialgorithm-server/models"
 	"github.com/gin-gonic/gin"
-	"github.com/gocql/gocql"
 )
 
 var user models.User
@@ -49,19 +50,17 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := models.GenerateToken([]byte(gocql.TimeUUID().String() + "+" + strconv.FormatUint(uint64(user.ID), 10)))
+	token, err := models.GenerateToken([]byte(user.Email + "+" + strconv.FormatUint(uint64(user.ID), 10)))
 
 	if err != nil {
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.JSON(http.StatusInternalServerError, gin.H{})
-		fmt.Println("hubo pedo", err)
 		return
 	}
 
 	c.Header("Access-Control-Allow-Origin", "*")
-	fmt.Println("HHSGSSS", token)
 	c.JSON(http.StatusOK, gin.H{
-		"token": token,
+		"token": b64.StdEncoding.EncodeToString(token),
 	})
 	return
 
