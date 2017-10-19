@@ -42,7 +42,8 @@ func (r *RequestNewLesson) Add() error {
 	}
 
 	lesson := Lesson{
-		Name: r.Name,
+		Name:    r.Name,
+		LevelID: level.ID,
 	}
 
 	tx := db.Begin()
@@ -53,6 +54,11 @@ func (r *RequestNewLesson) Add() error {
 
 	lessonPath := level.BaseDirectory + "/" + "Lesson_" + lesson.Name
 	if err := os.Mkdir(lessonPath, os.FileMode(0777)); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := db.Model(lesson).Update("base_directory", lessonPath).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
