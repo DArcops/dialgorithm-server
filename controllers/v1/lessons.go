@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/darcops/dialgorithm-server/models"
@@ -18,6 +19,7 @@ func AddLesson(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&requestLesson); err != nil {
+		fmt.Println("que pedito", err)
 		Respond(http.StatusBadRequest, gin.H{}, c)
 		return
 	}

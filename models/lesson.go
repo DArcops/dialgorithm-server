@@ -1,5 +1,11 @@
 package models
 
+import (
+	"errors"
+	"io/ioutil"
+	"os"
+)
+
 type Lesson struct {
 	ID            uint
 	LevelID       uint
@@ -30,26 +36,33 @@ var htmlBase = `
 
 func (r *RequestNewLesson) Add() error {
 
-	// course := Course{}
-	// if db.First(&course, "id = ?", r.CourseID).RecordNotFound() {
-	// 	return errors.New("course not found")
-	// }
-	//
-	// if r.LevelID < 1 || r.LevelID > 5 {
-	// 	return errors.New("Invalid course")
-	// }
-	//
-	// levelPath := course.BaseDirectory + "/Level_"+r.LevelID
-	// lessonPath := levelPath+"/"
-	// if _, err := os.Stat(levelPath); err == nil {
-	// 	//directory exists
-	// } else {
-	// 	if err := os.Mkdir(levelPath, os.FileMode(0777)); err != nil {
-	// 		return err
-	// 	}
-	//
-	// 	insertOverview(levelPath)
-	// }
-	//
+	level := Level{}
+	if db.First(&level, "course_id = ? and id = ?", r.CourseID, r.LevelID).RecordNotFound() {
+		return errors.New("record not found")
+	}
+
+	lesson := Lesson{
+		Name: r.Name,
+	}
+
+	tx := db.Begin()
+	if err := db.Create(&lesson).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	lessonPath := level.BaseDirectory + "/" + "Lesson_" + lesson.Name
+	if err := os.Mkdir(lessonPath, os.FileMode(0777)); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	code := htmlBase + "\n" + r.Markup + "</body>"
+	err := ioutil.WriteFile(lessonPath+"/overview.html", []byte(code), 0777)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
 	return nil
+
 }
