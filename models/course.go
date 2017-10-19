@@ -29,7 +29,27 @@ func (c *Course) Add() error {
 		return err
 	}
 
-	c.BaseDirectory = path
+	tx.Model(c).Update("base_directory", path)
+
+	for i := 1; i <= 5; i++ {
+		level := Level{
+			CourseID: c.ID,
+			Number:   uint(i),
+		}
+		if err := Create(&level).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+		strID := strconv.FormatUint(uint64(level.Number), 10)
+		if err := os.Mkdir(path+"/Level_"+strID, os.FileMode(0777)); err != nil {
+			tx.Rollback()
+			return err
+		}
+		if err := db.Model(level).Update("base_directory", path+"/Level_"+strID).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
 
 	tx.Commit()
 	return nil

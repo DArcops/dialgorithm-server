@@ -34,6 +34,7 @@ func Init() {
 	userRoutes()
 	courseRoutes()
 	lessonRoutes()
+	levelsRoutes()
 
 	router.Run(":8088")
 }
