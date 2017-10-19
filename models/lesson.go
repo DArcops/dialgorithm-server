@@ -7,9 +7,9 @@ import (
 )
 
 type Lesson struct {
-	ID            uint
+	ID            uint `json:"id"`
 	LevelID       uint
-	Name          string
+	Name          string `json:"name"`
 	BaseDirectory string
 }
 
@@ -71,4 +71,9 @@ func (r *RequestNewLesson) Add() error {
 	}
 	return nil
 
+}
+
+func GetLessons(levelID string) ([]Lesson, error) {
+	lessons := []Lesson{}
+	return lessons, db.Find(&lessons, "level_id = ?", levelID).Error
 }

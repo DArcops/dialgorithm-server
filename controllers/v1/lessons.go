@@ -32,3 +32,16 @@ func AddLesson(c *gin.Context) {
 	Respond(http.StatusOK, gin.H{}, c)
 	return
 }
+
+func GetLessons(c *gin.Context) {
+	levelID := c.Query("level_id")
+
+	lessons, err := models.GetLessons(levelID)
+	if err != nil {
+		Respond(http.StatusInternalServerError, gin.H{}, c)
+		return
+	}
+
+	Respond(http.StatusOK, lessons, c)
+	return
+}
