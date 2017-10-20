@@ -41,7 +41,6 @@ func GetLessons(c *gin.Context) {
 		Respond(http.StatusInternalServerError, gin.H{}, c)
 		return
 	}
-
 	Respond(http.StatusOK, lessons, c)
 	return
 }
