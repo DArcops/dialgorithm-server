@@ -6,10 +6,11 @@ import (
 )
 
 type Course struct {
-	ID            uint   `json:"id"`
-	Name          string `json:"name" binding:"required"`
-	Description   string `json:"description" binding:"required"`
-	BaseDirectory string `json:"-"`
+	ID               uint   `json:"id"`
+	Name             string `json:"name" binding:"required"`
+	ShortDescription string `json:"short_description" binding:"required"`
+	LargeDescription string `json:"large_description" binding:"required"`
+	BaseDirectory    string `json:"-"`
 }
 
 func (c *Course) Add() error {
