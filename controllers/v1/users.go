@@ -60,7 +60,8 @@ func Login(c *gin.Context) {
 
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.JSON(http.StatusOK, gin.H{
-		"token": b64.StdEncoding.EncodeToString(token),
+		"token":     b64.StdEncoding.EncodeToString(token),
+		"user_name": user.Name,
 	})
 	return
 
