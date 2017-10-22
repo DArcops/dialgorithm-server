@@ -1,6 +1,9 @@
 package models
 
-type Error struct {
-	Status  int
-	Message interface{}
-}
+import "errors"
+
+var (
+	ErrNotFound = errors.New("unable to find resource")
+
+	ErrToCreate = errors.New("")
+)

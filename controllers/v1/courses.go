@@ -95,6 +95,32 @@ func GetCourses(c *gin.Context) {
 	return
 }
 
+func SuscribeToCourse(c *gin.Context) {
+	var subscription models.Subscription
+
+	user := c.MustGet("user").(models.User)
+
+	if err := c.BindJSON(&subscription); err != nil {
+		Respond(http.StatusBadRequest, gin.H{}, c)
+		return
+	}
+
+	if subscription.UserPass != user.Password {
+		Respond(http.StatusForbidden, "Invalid password", c)
+		return
+	}
+
+	subscription.UserID = user.ID
+
+	if err := subscription.Add(); err != nil {
+		Respond(Err[err], err, c)
+		return
+	}
+
+	Respond(http.StatusCreated, gin.H{}, c)
+	return
+}
+
 func RespondWithError(code int, message string, c *gin.Context) {
 	response := map[string]string{"error: ": message}
 
