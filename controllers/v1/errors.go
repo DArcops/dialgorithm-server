@@ -8,7 +8,8 @@ import (
 
 var (
 	Err = map[error]int{
-		models.ErrNotFound: http.StatusNotFound,
-		models.ErrToCreate: http.StatusInternalServerError,
+		models.ErrNotFound:  http.StatusNotFound,
+		models.ErrToCreate:  http.StatusInternalServerError,
+		models.ErrDuplicate: http.StatusConflict,
 	}
 )
