@@ -10,14 +10,16 @@ type Lesson struct {
 	ID            uint `json:"id"`
 	LevelID       uint
 	Name          string `json:"name"`
+	Description   string `json:"description"`
 	BaseDirectory string
 }
 
 type RequestNewLesson struct {
-	Name     string `json:"name" binding:"required"`
-	CourseID uint   `json:"course_id" binding:"required"`
-	LevelID  uint   `json:"level_id" binding:"required"`
-	Markup   string `json:"code" binding:"required"`
+	Name        string `json:"name" binding:"required"`
+	CourseID    uint   `json:"course_id" binding:"required"`
+	LevelID     uint   `json:"level_id" binding:"required"`
+	Description string `json:"description" binding:"required"`
+	Markup      string `json:"code" binding:"required"`
 }
 
 var htmlBase = `
@@ -42,8 +44,9 @@ func (r *RequestNewLesson) Add() error {
 	}
 
 	lesson := Lesson{
-		Name:    r.Name,
-		LevelID: level.ID,
+		Name:        r.Name,
+		LevelID:     level.ID,
+		Description: r.Description,
 	}
 
 	tx := db.Begin()
