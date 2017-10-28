@@ -12,6 +12,10 @@ func (s *Subscription) Add() error {
 		return ErrNotFound
 	}
 
+	if !db.First(&Subscription{}, "user_id = ? and course_id = ?", s.UserID, s.CourseID).RecordNotFound() {
+		return ErrDuplicated
+	}
+
 	subscription := Subscription{
 		CourseID: s.CourseID,
 		UserID:   s.UserID,
