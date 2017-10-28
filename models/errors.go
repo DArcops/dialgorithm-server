@@ -7,5 +7,5 @@ var (
 
 	ErrToCreate = errors.New("")
 
-	ErrDuplicated = errors.New("Record already exists")
+	ErrDuplicate = errors.New("duplicated record")
 )

@@ -6,4 +6,5 @@ func lessonRoutes() {
 	lessons := v1.Group("lessons").Use(V1.UserMiddleware())
 	lessons.POST("/new", V1.AddLesson)
 	lessons.GET("", V1.GetLessons)
+	lessons.GET("/related", V1.GetRelatedLessons)
 }

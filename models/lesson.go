@@ -18,8 +18,8 @@ type RequestNewLesson struct {
 	Name        string `json:"name" binding:"required"`
 	CourseID    uint   `json:"course_id" binding:"required"`
 	LevelID     uint   `json:"level_id" binding:"required"`
-	Markup      string `json:"code" binding:"required"`
 	Description string `json:"description" binding:"required"`
+	Markup      string `json:"code" binding:"required"`
 }
 
 var htmlBase = `
