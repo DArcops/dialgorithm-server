@@ -15,7 +15,6 @@ var tables = []interface{}{
 	&User{},
 	&Level{},
 	&Lesson{},
-	&Permission{},
 	&Course{},
 	&Exercise{},
 	&Subscription{},

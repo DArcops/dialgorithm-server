@@ -7,11 +7,12 @@ import (
 )
 
 type Lesson struct {
-	ID            uint `json:"id"`
-	LevelID       uint
+	ID            uint   `json:"id"`
+	LevelID       uint   `json:"-"`
 	Name          string `json:"name"`
 	Description   string `json:"description"`
-	BaseDirectory string
+	BaseDirectory string `json:"-"`
+	SummerNotCode string `json:"code" gorm:"-"`
 }
 
 type RequestNewLesson struct {
@@ -21,20 +22,6 @@ type RequestNewLesson struct {
 	Description string `json:"description" binding:"required"`
 	Markup      string `json:"code" binding:"required"`
 }
-
-var htmlBase = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Summernote</title>
-  <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
-  <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
-</head>
-<body>`
-
-//var err Error
 
 func (r *RequestNewLesson) Add() error {
 
@@ -66,7 +53,7 @@ func (r *RequestNewLesson) Add() error {
 		return err
 	}
 
-	code := htmlBase + "\n" + r.Markup + "</body>"
+	code := r.Markup
 	err := ioutil.WriteFile(lessonPath+"/overview.html", []byte(code), 0777)
 	if err != nil {
 		tx.Rollback()
@@ -83,4 +70,13 @@ func GetLessons(levelID uint, last int64) ([]Lesson, error) {
 	} else {
 		return lessons, db.Find(&lessons, "level_id = ?", levelID).Error
 	}
+}
+
+func (l *Lesson) FillCode() error {
+	data, err := ioutil.ReadFile(l.BaseDirectory + "/overview.html")
+	if err != nil {
+		return ErrToCreate
+	}
+	l.SummerNotCode = string(data)
+	return nil
 }

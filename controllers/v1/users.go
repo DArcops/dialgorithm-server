@@ -11,13 +11,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var user models.User
-
 func GetUsers(c *gin.Context) {
 	fmt.Println("aqui se devolveran los usuarios")
 }
 
 func Register(c *gin.Context) {
+	var user models.User
 
 	if err := c.Bind(&user); err != nil {
 		c.Header("Access-Control-Allow-Origin", "*")
@@ -38,6 +37,8 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
+	var user models.User
+
 	if err := c.Bind(&user); err != nil {
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.JSON(http.StatusBadRequest, gin.H{})

@@ -7,5 +7,5 @@ var (
 
 	ErrToCreate = errors.New("")
 
-	ErrDuplicate = errors.New("duplicated record")
+	ErrDuplicated = errors.New("duplicated record")
 )

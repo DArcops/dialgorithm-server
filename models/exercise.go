@@ -55,7 +55,7 @@ func (e *RequestNewExercise) Add() error {
 		return err
 	}
 
-	code := htmlBase + "\n" + e.Markup + "</body>"
+	code := e.Markup
 	err := ioutil.WriteFile(exercisePath+"/instructions.html", []byte(code), 0777)
 	if err != nil {
 		tx.Rollback()
