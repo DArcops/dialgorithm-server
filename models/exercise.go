@@ -7,10 +7,10 @@ import (
 )
 
 type Exercise struct {
-	ID            uint
-	LessonID      uint
-	Name          string
-	BaseDirectory string
+	ID            uint   `json:"id"`
+	LessonID      uint   `json:"-"`
+	Name          string `json:"name"`
+	BaseDirectory string `json:"-"`
 }
 
 type RequestNewExercise struct {

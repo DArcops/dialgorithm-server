@@ -30,3 +30,21 @@ func AddExercise(c *gin.Context) {
 	Respond(http.StatusOK, gin.H{}, c)
 	return
 }
+
+func GetExercises(c *gin.Context) {
+	lessonID := c.Query("lesson_id")
+
+	lesson := models.Lesson{}
+	if models.First(&lesson, "id = ?", lessonID).RecordNotFound() {
+		Respond(http.StatusNotFound, gin.H{}, c)
+		return
+	}
+
+	exercises, err := lesson.GetExercises()
+	if err != nil {
+		Respond(Err[err], err, c)
+		return
+	}
+	Respond(http.StatusOK, exercises, c)
+	return
+}

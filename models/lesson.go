@@ -80,3 +80,8 @@ func (l *Lesson) FillCode() error {
 	l.SummerNotCode = string(data)
 	return nil
 }
+
+func (l Lesson) GetExercises() ([]Exercise, error) {
+	exercises := []Exercise{}
+	return exercises, db.Find(&exercises, "lesson_id = ?", l.ID).Error
+}
