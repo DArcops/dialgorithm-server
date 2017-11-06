@@ -85,3 +85,16 @@ func (l Lesson) GetExercises() ([]Exercise, error) {
 	exercises := []Exercise{}
 	return exercises, db.Find(&exercises, "lesson_id = ?", l.ID).Error
 }
+
+func (l Lesson) GetExercise(exerciseID uint) (Exercise, error) {
+	exercise := Exercise{}
+	if db.First(&exercise, "id = ?", exerciseID).RecordNotFound() {
+		return exercise, ErrNotFound
+	}
+	data, err := ioutil.ReadFile(exercise.BaseDirectory + "/instructions.html")
+	if err != nil {
+		return exercise, ErrToCreate
+	}
+	exercise.Code = string(data)
+	return exercise, nil
+}

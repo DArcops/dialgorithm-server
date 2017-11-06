@@ -2,6 +2,7 @@ package v1
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/darcops/dialgorithm-server/models"
 	"github.com/gin-gonic/gin"
@@ -46,5 +47,27 @@ func GetExercises(c *gin.Context) {
 		return
 	}
 	Respond(http.StatusOK, exercises, c)
+	return
+}
+
+func GetExercise(c *gin.Context) {
+	lessonID := c.Query("lesson_id")
+
+	lesson := models.Lesson{}
+	if models.First(&lesson, "id = ?", lessonID).RecordNotFound() {
+		Respond(http.StatusNotFound, gin.H{}, c)
+		return
+	}
+
+	exerciseID := c.Param("exercise_id")
+	exrID, _ := strconv.ParseUint(exerciseID, 10, 32)
+
+	exercise, err := lesson.GetExercise(uint(exrID))
+	if err != nil {
+		Respond(Err[err], err, c)
+		return
+	}
+
+	Respond(http.StatusOK, exercise, c)
 	return
 }
