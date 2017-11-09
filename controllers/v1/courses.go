@@ -80,6 +80,25 @@ func UserMiddleware() gin.HandlerFunc {
 	}
 }
 
+func CourseMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		courseID := c.Param("course_id")
+		course := models.Course{}
+		if models.First(&course, "id = ?", courseID).RecordNotFound() {
+			RespondWithError(http.StatusNotFound, "Course not found", c)
+			return
+		}
+
+		user := c.MustGet("user").(models.User)
+		if models.First(&models.Subscription{}, "user_id = ? and course_id = ?", user.ID, course.ID).RecordNotFound() {
+			RespondWithError(http.StatusForbidden, "you dont have any susbciption to this course", c)
+			return
+		}
+		c.Set("course", course)
+		c.Next()
+	}
+}
+
 func GetCourses(c *gin.Context) {
 	last := c.Query("last")
 	elem, err := strconv.ParseInt(last, 10, 32)
