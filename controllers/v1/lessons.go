@@ -3,7 +3,6 @@ package v1
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/darcops/dialgorithm-server/models"
 	"github.com/gin-gonic/gin"
@@ -35,25 +34,10 @@ func AddLesson(c *gin.Context) {
 }
 
 func GetLessons(c *gin.Context) {
-	levelID := c.Query("level_id")
-	pagination := c.Query("pagination")
-	courseID := c.Query("course_id")
 
-	var last int64
+	level := c.MustGet("level").(models.Level)
 
-	level := models.Level{}
-	if models.First(&level, "id = ? and course_id = ?", levelID, courseID).RecordNotFound() {
-		Respond(http.StatusNotFound, gin.H{}, c)
-		return
-	}
-
-	if pagination == "true" {
-		last, _ = strconv.ParseInt(c.Query("last"), 10, 32)
-	} else {
-		last = -1
-	}
-
-	lessons, err := models.GetLessons(level.ID, last)
+	lessons, err := level.GetLessons()
 	if err != nil {
 		Respond(http.StatusInternalServerError, gin.H{}, c)
 		return

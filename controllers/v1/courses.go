@@ -82,7 +82,7 @@ func UserMiddleware() gin.HandlerFunc {
 
 func CourseMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		courseID := c.Param("course_id")
+		courseID := c.Query("course_id")
 		course := models.Course{}
 		if models.First(&course, "id = ?", courseID).RecordNotFound() {
 			RespondWithError(http.StatusNotFound, "Course not found", c)
@@ -95,6 +95,20 @@ func CourseMiddleware() gin.HandlerFunc {
 			return
 		}
 		c.Set("course", course)
+		c.Next()
+	}
+}
+
+func LevelMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		levelID := c.Query("level_id")
+		course := c.MustGet("course").(models.Course)
+		level := models.Level{}
+		if models.First(&level, "id = ? and course_id = ?", levelID, course.ID).RecordNotFound() {
+			RespondWithError(http.StatusNotFound, "", c)
+			return
+		}
+		c.Set("level", level)
 		c.Next()
 	}
 }
