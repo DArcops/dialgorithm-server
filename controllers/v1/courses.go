@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -76,6 +77,41 @@ func UserMiddleware() gin.HandlerFunc {
 		user := models.User{}
 		models.First(&user, "id = ?", data[1])
 		c.Set("user", user)
+		c.Next()
+	}
+}
+
+func CourseMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		courseID := c.Query("course_id")
+		course := models.Course{}
+		if models.First(&course, "id = ?", courseID).RecordNotFound() {
+			RespondWithError(http.StatusNotFound, "Course not found", c)
+			return
+		}
+
+		user := c.MustGet("user").(models.User)
+		if models.First(&models.Subscription{}, "user_id = ? and course_id = ?", user.ID, course.ID).RecordNotFound() && !user.CanWrite {
+			RespondWithError(http.StatusForbidden, "you dont have any susbciption to this course", c)
+			return
+		}
+		c.Set("course", course)
+		c.Next()
+	}
+}
+
+func LevelMiddleware() gin.HandlerFunc {
+	fmt.Println("entyra al middleware de level")
+
+	return func(c *gin.Context) {
+		levelID := c.Query("level_id")
+		course := c.MustGet("course").(models.Course)
+		level := models.Level{}
+		if models.First(&level, "id = ? and course_id = ?", levelID, course.ID).RecordNotFound() {
+			RespondWithError(http.StatusNotFound, "", c)
+			return
+		}
+		c.Set("level", level)
 		c.Next()
 	}
 }

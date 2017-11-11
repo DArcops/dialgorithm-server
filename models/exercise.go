@@ -11,7 +11,7 @@ type Exercise struct {
 	LessonID      uint   `json:"-"`
 	Name          string `json:"name"`
 	BaseDirectory string `json:"-"`
-	Code          string `json:"name" gorm"-"`
+	Code          string `json:"code" gorm"-"`
 }
 
 type RequestNewExercise struct {
