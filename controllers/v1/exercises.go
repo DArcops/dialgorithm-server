@@ -34,7 +34,6 @@ func AddExercise(c *gin.Context) {
 
 func GetExercises(c *gin.Context) {
 	lessonID := c.Query("lesson_id")
-
 	lesson := models.Lesson{}
 	if models.First(&lesson, "id = ?", lessonID).RecordNotFound() {
 		Respond(http.StatusNotFound, gin.H{}, c)
