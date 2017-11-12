@@ -117,3 +117,17 @@ func (e Exercise) TestSolution(code string) string {
 	return string(body)
 
 }
+
+func (e Exercise) Solve(code string) (string, string) {
+	compilation := e.TestSolution(code)
+
+	dat, _ := ioutil.ReadFile(e.BaseDirectory + "/input.txt")
+
+	fmt.Println("sent:", compilation)
+	fmt.Println("saved:", string(dat))
+
+	if compilation == string(dat) {
+		return compilation, "Acepted"
+	}
+	return compilation, "Wrong"
+}
