@@ -1,8 +1,12 @@
 package models
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 )
 
@@ -11,7 +15,7 @@ type Exercise struct {
 	LessonID      uint   `json:"-"`
 	Name          string `json:"name"`
 	BaseDirectory string `json:"-"`
-	Code          string `json:"code" gorm"-"`
+	Code          string `json:"code" gorm:"-"`
 }
 
 type RequestNewExercise struct {
@@ -22,6 +26,14 @@ type RequestNewExercise struct {
 	Markup   string `json:"code" binding:"required"`
 	Input    string `json:"input"`
 	Output   string `json:"output"`
+}
+
+var coliruUrl = "http://coliru.stacked-crooked.com/compile"
+var cmdCompile = "g++ -std=c++17 -O2 -Wall -pedantic -pthread main.cpp && ./a.out"
+
+type Coliru struct {
+	Cmd string `json:"cmd"`
+	Src string `json:"src"`
 }
 
 func (e *RequestNewExercise) Add() error {
@@ -80,4 +92,28 @@ func (e *RequestNewExercise) Add() error {
 	}
 
 	return nil
+}
+
+func (e Exercise) TestSolution(code string) string {
+
+	coliru := Coliru{
+		Cmd: cmdCompile,
+		Src: code,
+	}
+	str, _ := json.Marshal(coliru)
+
+	req, err := http.NewRequest("POST", coliruUrl, bytes.NewBuffer(str))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("COOODE STATUS", resp.StatusCode)
+	return string(body)
+
 }

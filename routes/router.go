@@ -36,6 +36,7 @@ func Init() {
 	lessonRoutes()
 	levelsRoutes()
 	exerciseRoutes()
+	solutionRoutes()
 
 	router.Run(":8088")
 }

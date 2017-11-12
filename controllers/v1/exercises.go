@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -68,5 +69,36 @@ func GetExercise(c *gin.Context) {
 	}
 
 	Respond(http.StatusOK, exercise, c)
+	return
+}
+
+func TestSolution(c *gin.Context) {
+	var solution models.Exercise
+
+	lessonID := c.Query("lesson_id")
+
+	lesson := models.Lesson{}
+	if models.First(&lesson, "id = ?", lessonID).RecordNotFound() {
+		Respond(http.StatusNotFound, gin.H{}, c)
+		return
+	}
+
+	exerciseID := c.Param("exercise_id")
+	exrID, _ := strconv.ParseUint(exerciseID, 10, 32)
+
+	exercise, err := lesson.GetExercise(uint(exrID))
+	if err != nil {
+		Respond(Err[err], err, c)
+		return
+	}
+
+	if err := c.BindJSON(&solution); err != nil {
+		Respond(http.StatusBadRequest, gin.H{}, c)
+		return
+	}
+
+	response := exercise.TestSolution(solution.Code)
+	fmt.Println("RESPUESTA!", response)
+	Respond(http.StatusOK, response, c)
 	return
 }
