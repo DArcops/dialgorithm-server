@@ -123,11 +123,26 @@ func (e Exercise) Solve(code string) (string, string) {
 
 	dat, _ := ioutil.ReadFile(e.BaseDirectory + "/input.txt")
 
-	fmt.Println("sent:", compilation)
-	fmt.Println("saved:", string(dat))
+	strDat := string(dat)
 
-	if compilation == string(dat) {
+	formatedSavedOutput := formatOutput(strDat)
+	formatedSentSolution := formatOutput(compilation)
+
+	fmt.Println("sent:", formatedSentSolution)
+	fmt.Println("saved:", formatedSavedOutput)
+
+	if formatedSentSolution == formatedSavedOutput {
 		return compilation, "Acepted"
 	}
 	return compilation, "Wrong"
+}
+
+func formatOutput(strDat string) string {
+	formatedSolution := ""
+	for i := 0; i < len(strDat); i++ {
+		if string(strDat[i]) != "\n" && string(strDat[i]) != "\r" && string(strDat[i]) != " " {
+			formatedSolution += string(strDat[i])
+		}
+	}
+	return formatedSolution
 }
