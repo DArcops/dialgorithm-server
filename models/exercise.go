@@ -95,10 +95,13 @@ func (e *RequestNewExercise) Add() error {
 }
 
 func (e Exercise) TestSolution(code string) string {
+	dat, _ := ioutil.ReadFile(e.BaseDirectory + "/input.txt")
+
+	strDat := string(dat)
 
 	coliru := Coliru{
 		Cmd: cmdCompile,
-		Src: code,
+		Src: code + " " + strDat,
 	}
 	str, _ := json.Marshal(coliru)
 
@@ -121,7 +124,7 @@ func (e Exercise) TestSolution(code string) string {
 func (e Exercise) Solve(code string, userID uint) (string, string) {
 	compilation := e.TestSolution(code)
 
-	dat, _ := ioutil.ReadFile(e.BaseDirectory + "/input.txt")
+	dat, _ := ioutil.ReadFile(e.BaseDirectory + "/output.txt")
 
 	strDat := string(dat)
 
