@@ -23,7 +23,6 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{})
 		return
 	}
-	fmt.Println("que pedoo", user)
 
 	if err := models.Create(&user).Error; err != nil {
 		c.Header("Access-Control-Allow-Origin", "*")
@@ -73,5 +72,16 @@ func GetProfile(c *gin.Context) {
 	user := c.MustGet("user").(models.User)
 	user.Password = ""
 	Respond(http.StatusOK, user, c)
+	return
+}
+
+func GetUserCourses(c *gin.Context) {
+	user := c.MustGet("user").(models.User)
+	courses, err := user.GetCourses()
+	if err != nil {
+		Respond(http.StatusInternalServerError, err, c)
+		return
+	}
+	Respond(http.StatusOK, courses, c)
 	return
 }

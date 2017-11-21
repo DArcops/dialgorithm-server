@@ -100,8 +100,8 @@ func (e Exercise) TestSolution(code string) string {
 	strDat := string(dat)
 
 	coliru := Coliru{
-		Cmd: cmdCompile,
-		Src: code + " " + strDat,
+		Cmd: cmdCompile + " " + strDat,
+		Src: code,
 	}
 	str, _ := json.Marshal(coliru)
 
