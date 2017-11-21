@@ -68,3 +68,10 @@ func Login(c *gin.Context) {
 	return
 
 }
+
+func GetProfile(c *gin.Context) {
+	user := c.MustGet("user").(models.User)
+	user.Password = ""
+	Respond(http.StatusOK, user, c)
+	return
+}

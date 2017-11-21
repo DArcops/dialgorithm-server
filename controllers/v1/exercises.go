@@ -107,6 +107,7 @@ func Solve(c *gin.Context) {
 	var solution models.Exercise
 
 	lessonID := c.Query("lesson_id")
+	user := c.MustGet("user").(models.User)
 
 	lesson := models.Lesson{}
 	if models.First(&lesson, "id = ?", lessonID).RecordNotFound() {
@@ -128,7 +129,7 @@ func Solve(c *gin.Context) {
 		return
 	}
 
-	compiled, status := exercise.Solve(solution.Code)
+	compiled, status := exercise.Solve(solution.Code, user.ID)
 	Respond(http.StatusOK, gin.H{
 		"output": compiled,
 		"status": status,

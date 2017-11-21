@@ -18,6 +18,7 @@ var tables = []interface{}{
 	&Course{},
 	&Exercise{},
 	&Subscription{},
+	&Solution{},
 }
 
 func Connect() {

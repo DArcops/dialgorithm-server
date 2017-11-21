@@ -118,7 +118,7 @@ func (e Exercise) TestSolution(code string) string {
 
 }
 
-func (e Exercise) Solve(code string) (string, string) {
+func (e Exercise) Solve(code string, userID uint) (string, string) {
 	compilation := e.TestSolution(code)
 
 	dat, _ := ioutil.ReadFile(e.BaseDirectory + "/input.txt")
@@ -132,9 +132,20 @@ func (e Exercise) Solve(code string) (string, string) {
 	fmt.Println("saved:", formatedSavedOutput)
 
 	if formatedSentSolution == formatedSavedOutput {
+		e.insertSolution(userID, StatusAccepted)
 		return compilation, "Acepted"
 	}
+	e.insertSolution(userID, StatusWrongAnswer)
 	return compilation, "Wrong"
+}
+
+func (e Exercise) insertSolution(userID uint, status string) {
+	acceptedSolution := Solution{
+		UserID:     userID,
+		ExerciseID: e.ID,
+		Status:     status,
+	}
+	db.Create(&acceptedSolution)
 }
 
 func formatOutput(strDat string) string {
