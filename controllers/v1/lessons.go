@@ -62,3 +62,37 @@ func GetLesson(c *gin.Context) {
 	Respond(http.StatusOK, lesson, c)
 	return
 }
+
+func UpdateLesson(c *gin.Context) {
+	var lesson models.Lesson
+
+	user := c.MustGet("user").(models.User)
+	if !user.CanWrite {
+		Respond(http.StatusForbidden, "you dont have enough permissions", c)
+		return
+	}
+
+	if err := c.BindJSON(&lesson); err != nil {
+		Respond(http.StatusBadRequest, gin.H{}, c)
+		return
+	}
+
+	id := c.Param("lesson_id")
+
+	if err := lesson.Update(id); err != nil {
+		Respond(http.StatusInternalServerError, "", c)
+		return
+	}
+
+	savedLesson := models.Lesson{}
+	models.First(&savedLesson, "id = ?", id)
+
+	err := savedLesson.UpdateCode(lesson.SummerNotCode)
+	if err != nil {
+		RespondWithError(http.StatusInternalServerError, "", c)
+		return
+	}
+
+	Respond(http.StatusOK, "Updated", c)
+	return
+}

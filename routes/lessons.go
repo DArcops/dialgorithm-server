@@ -7,4 +7,5 @@ func lessonRoutes() {
 	lessons.POST("/new", V1.AddLesson)
 	lessons.GET("", V1.CourseMiddleware(), V1.LevelMiddleware(), V1.LevelMiddleware(), V1.GetLessons)
 	lessons.GET("/:lesson_id", V1.GetLesson)
+	lessons.POST("/update/:lesson_id", V1.UpdateLesson)
 }

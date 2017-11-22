@@ -7,4 +7,6 @@ func courseRoutes() {
 	courses.POST("/new", V1.AddCourse)
 	courses.POST("/suscribe", V1.SuscribeToCourse)
 	courses.GET("/", V1.GetCourses)
+	courses.GET("/:course_id", V1.GetCourse)
+	courses.POST("/update/:course_id", V1.UpdateCourse)
 }

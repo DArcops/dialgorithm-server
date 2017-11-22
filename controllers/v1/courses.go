@@ -169,3 +169,43 @@ func Respond(code int, data interface{}, c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.JSON(code, data)
 }
+
+func GetCourse(c *gin.Context) {
+	user := c.MustGet("user").(models.User)
+	if !user.CanWrite {
+		Respond(http.StatusForbidden, "You dont have enough permissions", c)
+		return
+	}
+	courseID := c.Param("course_id")
+	course := models.Course{}
+	if err := models.First(&course, "id = ?", courseID).Error; err != nil {
+		fmt.Println(err)
+		Respond(http.StatusInternalServerError, gin.H{}, c)
+		return
+	}
+	Respond(http.StatusOK, course, c)
+	return
+}
+
+func UpdateCourse(c *gin.Context) {
+	var course models.Course
+
+	user := c.MustGet("user").(models.User)
+	if !user.CanWrite {
+		Respond(http.StatusForbidden, "You dont have enough permissions", c)
+		return
+	}
+	courseID := c.Param("course_id")
+
+	if err := c.BindJSON(&course); err != nil {
+		Respond(http.StatusBadRequest, gin.H{}, c)
+		return
+	}
+
+	if err := course.Update(courseID); err != nil {
+		Respond(http.StatusInternalServerError, "", c)
+		return
+	}
+	Respond(http.StatusOK, "updated", c)
+	return
+}

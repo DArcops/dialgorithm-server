@@ -56,6 +56,10 @@ func (c *Course) Add() error {
 	return nil
 }
 
+func (c Course) Update(id string) error {
+	return db.Model(&Course{}).Where("id = ?", id).Update(c).Error
+}
+
 func GetCourses(last int) ([]Course, error) {
 	courses := []Course{}
 	return courses, db.Find(&courses, "id > ?", last).Limit(10).Error

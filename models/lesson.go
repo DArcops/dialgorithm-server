@@ -98,3 +98,19 @@ func (l Lesson) GetExercise(exerciseID uint) (Exercise, error) {
 	exercise.Code = string(data)
 	return exercise, nil
 }
+
+func (l Lesson) Update(id string) error {
+	err := db.Model(&Lesson{}).Where("id = ?", id).Update(l).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l Lesson) UpdateCode(code string) error {
+	err := ioutil.WriteFile(l.BaseDirectory+"/overview.html", []byte(code), 0777)
+	if err != nil {
+		return err
+	}
+	return nil
+}
