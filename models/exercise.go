@@ -151,6 +151,39 @@ func (e Exercise) insertSolution(userID uint, status string) {
 	db.Create(&acceptedSolution)
 }
 
+func (e Exercise) FillIO() RequestNewExercise {
+	dat, _ := ioutil.ReadFile(e.BaseDirectory + "/output.txt")
+	dat2, _ := ioutil.ReadFile(e.BaseDirectory + "/input.txt")
+
+	response := RequestNewExercise{
+		Name:   e.Name,
+		Markup: e.Code,
+		Input:  string(dat2),
+		Output: string(dat),
+	}
+	return response
+}
+
+func (e *Exercise) Update(req RequestNewExercise) error {
+	e.Name = req.Name
+	if err := db.Model(&Exercise{}).Where("id = ?", e.ID).Update(e).Error; err != nil {
+		return err
+	}
+	err := ioutil.WriteFile(e.BaseDirectory+"/input.txt", []byte(req.Input), 0777)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(e.BaseDirectory+"/output.txt", []byte(req.Output), 0777)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(e.BaseDirectory+"/instructions.html", []byte(req.Markup), 0777)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func formatOutput(strDat string) string {
 	formatedSolution := ""
 	for i := 0; i < len(strDat); i++ {

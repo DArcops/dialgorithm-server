@@ -68,6 +68,14 @@ func GetExercise(c *gin.Context) {
 		return
 	}
 
+	user := c.MustGet("user").(models.User)
+
+	if user.CanWrite && c.Query("to_update") == "true" {
+		response := exercise.FillIO()
+		Respond(http.StatusOK, response, c)
+		return
+	}
+
 	Respond(http.StatusOK, exercise, c)
 	return
 }
@@ -136,4 +144,33 @@ func Solve(c *gin.Context) {
 	}, c)
 	return
 
+}
+
+func UpdateExercise(c *gin.Context) {
+	var requestExercise models.RequestNewExercise
+
+	user := c.MustGet("user").(models.User)
+
+	if !user.CanWrite {
+		Respond(http.StatusForbidden, gin.H{}, c)
+		return
+	}
+
+	if err := c.BindJSON(&requestExercise); err != nil {
+		Respond(http.StatusBadRequest, gin.H{}, c)
+		fmt.Println("ioad", err)
+		return
+	}
+
+	exerciseID := c.Param("exercise_id")
+	exercise := models.Exercise{}
+	models.First(&exercise, "id = ?", exerciseID)
+
+	if err := exercise.Update(requestExercise); err != nil {
+		Respond(http.StatusInternalServerError, err, c)
+		return
+	}
+
+	Respond(http.StatusOK, "updated", c)
+	return
 }
