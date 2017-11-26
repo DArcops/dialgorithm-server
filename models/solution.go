@@ -3,7 +3,7 @@ package models
 import "time"
 
 const (
-	StatusAccepted    = "accpeted"
+	StatusAccepted    = "accepted"
 	StatusWrongAnswer = "wrong"
 )
 

@@ -13,6 +13,13 @@ type Course struct {
 	BaseDirectory    string `json:"-"`
 }
 
+type ProfileStats struct {
+	UserName             string `json:"username"`
+	UserEmail            string `json:"email"`
+	SolvedExercises      int    `json:"solved_exercises"`
+	TotalCourseExercises uint   `json:"total_course_ex"`
+}
+
 func (c *Course) Add() error {
 	tx := db.Begin()
 
@@ -65,8 +72,21 @@ func GetCourses(last int) ([]Course, error) {
 	return courses, db.Find(&courses, "id > ?", last).Limit(10).Error
 }
 
-func (c Course) GetUsersSuscribed() ([]User, error) {
+func (c Course) GetUsersSuscribed() ([]ProfileStats, error) {
 	users := []User{}
-	db.Table("subscriptions").Select("name,email").Joins("join users on subscriptions.user_id=users.id and subscriptions.course_id=?", c.ID).Scan(&users)
-	return users, nil
+	profStats := []ProfileStats{}
+
+	db.Table("subscriptions").Select("users.id,name,email").Joins("join users on subscriptions.user_id=users.id and subscriptions.course_id=?", c.ID).Scan(&users)
+
+	for _, u := range users {
+		sol := []Solution{}
+		db.Find(&sol, "user_id = ? and course_id=? and status=?", u.ID, c.ID, "accepted")
+		proStat := ProfileStats{
+			UserName:        u.Name,
+			UserEmail:       u.Email,
+			SolvedExercises: len(sol),
+		}
+		profStats = append(profStats, proStat)
+	}
+	return profStats, nil
 }
