@@ -121,7 +121,7 @@ func (e Exercise) TestSolution(code string) string {
 
 }
 
-func (e Exercise) Solve(code string, userID uint) (string, string) {
+func (e Exercise) Solve(code string, userID uint, courseID uint, lessonID uint) (string, string) {
 	compilation := e.TestSolution(code)
 
 	dat, _ := ioutil.ReadFile(e.BaseDirectory + "/output.txt")
@@ -135,18 +135,20 @@ func (e Exercise) Solve(code string, userID uint) (string, string) {
 	fmt.Println("saved:", formatedSavedOutput)
 
 	if formatedSentSolution == formatedSavedOutput {
-		e.insertSolution(userID, StatusAccepted)
+		e.insertSolution(userID, StatusAccepted, courseID, lessonID)
 		return compilation, "Acepted"
 	}
-	e.insertSolution(userID, StatusWrongAnswer)
+	e.insertSolution(userID, StatusWrongAnswer, courseID, lessonID)
 	return compilation, "Wrong"
 }
 
-func (e Exercise) insertSolution(userID uint, status string) {
+func (e Exercise) insertSolution(userID uint, status string, courseID uint, lessonID uint) {
 	acceptedSolution := Solution{
 		UserID:     userID,
 		ExerciseID: e.ID,
 		Status:     status,
+		CourseID:   courseID,
+		LessonID:   lessonID,
 	}
 	db.Create(&acceptedSolution)
 }

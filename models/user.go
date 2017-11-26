@@ -11,6 +11,10 @@ type User struct {
 	//Permissions []*Permission  `gorm:"many2many:accesses;"`
 }
 
+type NewAdmin struct {
+	Email string `json:"email" binding:"required"`
+}
+
 func GenerateToken(message []byte) ([]byte, error) {
 	return encrypt.Encrypt(message)
 }
@@ -27,4 +31,8 @@ func (u User) GetCourses() ([]Course, error) {
 		courses = append(courses, course)
 	}
 	return courses, nil
+}
+
+func (u User) AddNewAdmin(email string) error {
+	return db.Model(&User{}).Where("email = ?", email).Update("can_write", true).Error
 }

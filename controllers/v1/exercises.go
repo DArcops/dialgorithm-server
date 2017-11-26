@@ -137,7 +137,10 @@ func Solve(c *gin.Context) {
 		return
 	}
 
-	compiled, status := exercise.Solve(solution.Code, user.ID)
+	courseID, _ := strconv.ParseUint(c.Query("course_id"), 10, 32)
+	intLessonID, _ := strconv.ParseUint(lessonID, 10, 32)
+
+	compiled, status := exercise.Solve(solution.Code, user.ID, uint(courseID), uint(intLessonID))
 	Respond(http.StatusOK, gin.H{
 		"output": compiled,
 		"status": status,

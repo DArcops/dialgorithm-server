@@ -9,4 +9,5 @@ func courseRoutes() {
 	courses.GET("/", V1.GetCourses)
 	courses.GET("/:course_id", V1.GetCourse)
 	courses.POST("/update/:course_id", V1.UpdateCourse)
+	courses.GET(":course_id/users_suscribed", V1.GetUsersSuscribed)
 }

@@ -12,6 +12,7 @@ func userRoutes() {
 	users.GET("", V1.GetUsers)
 	users.POST("/register", V1.Register)
 	users.POST("/login", V1.Login)
+	users.POST("/addAdmin", V1.UserMiddleware(), V1.AddAdmin)
 	users.GET("/profile", V1.UserMiddleware(), V1.GetProfile)
 	users.GET("/courses", V1.UserMiddleware(), V1.GetUserCourses)
 }

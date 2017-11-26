@@ -209,3 +209,24 @@ func UpdateCourse(c *gin.Context) {
 	Respond(http.StatusOK, "updated", c)
 	return
 }
+
+func GetUsersSuscribed(c *gin.Context) {
+	user := c.MustGet("user").(models.User)
+
+	if !user.CanWrite {
+		Respond(http.StatusForbidden, "you dont have enough permissions", c)
+		return
+	}
+
+	strCourseID := c.Param("course_id")
+	course := models.Course{}
+	models.First(&course, "id = ?", strCourseID)
+
+	usersSuscribed, err := course.GetUsersSuscribed()
+	if err != nil {
+		Respond(http.StatusInternalServerError, err, c)
+		return
+	}
+	Respond(http.StatusOK, usersSuscribed, c)
+	return
+}

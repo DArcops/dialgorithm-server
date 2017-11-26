@@ -64,3 +64,9 @@ func GetCourses(last int) ([]Course, error) {
 	courses := []Course{}
 	return courses, db.Find(&courses, "id > ?", last).Limit(10).Error
 }
+
+func (c Course) GetUsersSuscribed() ([]User, error) {
+	users := []User{}
+	db.Table("subscriptions").Select("name,email").Joins("join users on subscriptions.user_id=users.id and subscriptions.course_id=?", c.ID).Scan(&users)
+	return users, nil
+}

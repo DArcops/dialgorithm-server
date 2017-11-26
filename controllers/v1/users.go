@@ -85,3 +85,25 @@ func GetUserCourses(c *gin.Context) {
 	Respond(http.StatusOK, courses, c)
 	return
 }
+
+func AddAdmin(c *gin.Context) {
+	var newAdmin models.NewAdmin
+
+	if err := c.Bind(&newAdmin); err != nil {
+		Respond(http.StatusBadRequest, "", c)
+		return
+	}
+
+	user := c.MustGet("user").(models.User)
+	if !user.CanWrite {
+		Respond(http.StatusForbidden, "you dont have enough permissions", c)
+		return
+	}
+
+	if err := user.AddNewAdmin(newAdmin.Email); err != nil {
+		Respond(Err[err], err, c)
+		return
+	}
+	Respond(http.StatusCreated, "created", c)
+	return
+}
