@@ -127,6 +127,15 @@ func GetCourses(c *gin.Context) {
 		Respond(http.StatusInternalServerError, gin.H{}, c)
 		return
 	}
+
+	user := c.MustGet("user").(models.User)
+
+	if user.CanWrite {
+		extendedCourses := models.AddSuscribers(courses)
+		Respond(http.StatusOK, extendedCourses, c)
+		return
+	}
+
 	Respond(http.StatusOK, courses, c)
 	return
 }

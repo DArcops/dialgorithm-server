@@ -7,6 +7,7 @@ func solutionRoutes() {
 	{
 		solutions.POST("/:exercise_id", V1.CourseMiddleware(), V1.TestSolution)
 		solutions.POST("/:exercise_id/solve", V1.CourseMiddleware(), V1.Solve)
+		solutions.GET("", V1.GetSolutions)
 	}
 
 }

@@ -20,6 +20,14 @@ type ProfileStats struct {
 	TotalCourseExercises uint   `json:"total_course_ex"`
 }
 
+type ExtendedCourse struct {
+	ID               uint   `json:"id"`
+	Name             string `json:"name" binding:"required"`
+	ShortDescription string `json:"short_description" binding:"required"`
+	LargeDescription string `json:"large_description" binding:"required"`
+	Suscribers       int    `json:"suscribers"`
+}
+
 func (c *Course) Add() error {
 	tx := db.Begin()
 
@@ -89,4 +97,21 @@ func (c Course) GetUsersSuscribed() ([]ProfileStats, error) {
 		profStats = append(profStats, proStat)
 	}
 	return profStats, nil
+}
+
+func AddSuscribers(courses []Course) []ExtendedCourse {
+	ext := []ExtendedCourse{}
+	for _, c := range courses {
+		suscribers := []Subscription{}
+		db.Find(&suscribers, "course_id = ?", c.ID)
+		ad := ExtendedCourse{
+			ID:               c.ID,
+			Name:             c.Name,
+			ShortDescription: c.ShortDescription,
+			LargeDescription: c.LargeDescription,
+			Suscribers:       len(suscribers),
+		}
+		ext = append(ext, ad)
+	}
+	return ext
 }
